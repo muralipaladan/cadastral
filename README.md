@@ -1,1 +1,1 @@
-https://muralipaladan.github.io/my-gps-map/
+(https://muralipaladan.github.io/cadastral/)
