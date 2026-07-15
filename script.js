@@ -71,11 +71,11 @@
   map.createPane('cadastralPane'); Object.assign(map.getPane('cadastralPane').style, { zIndex:'600', pointerEvents:'none' });
 
   const WMS_BASE = { format:'image/png', transparent:true, maxZoom:22, tileSize:512, zoomOffset:-1, pane:'cadastralPane', className:'parcel-red' };
-  // Bhuvan GWC WMS cadastral layer (cadastral:cadastral_india).
+  // Bhuvan GWC WMS Telangana cadastral layer (cadastral:TG_Cad).
   const wmsLayers = {
     cadastral: L.tileLayer.wms(BHUVAN_URL, {
       ...WMS_BASE,
-      layers: 'cadastral:cadastral_india',
+      layers: 'cadastral:TG_Cad',
       format: 'image/png',
       transparent: true,
       version: '1.1.1'
@@ -87,7 +87,7 @@
 
   const mini = L.map('zoomBox', { attributionControl:false, zoomControl:false, dragging:false, touchZoom:false, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, layers:[L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom:22, subdomains:['mt0','mt1','mt2','mt3'] })] });
   mini.createPane('miniCadastral'); Object.assign(mini.getPane('miniCadastral').style, { zIndex:'600', pointerEvents:'none' });
-  L.tileLayer.wms(BHUVAN_URL, { ...WMS_BASE, pane:'miniCadastral', layers:'cadastral:cadastral_india', format:'image/png', transparent:true, version:'1.1.1' }).addTo(mini);
+  L.tileLayer.wms(BHUVAN_URL, { ...WMS_BASE, pane:'miniCadastral', layers:'cadastral:TG_Cad', format:'image/png', transparent:true, version:'1.1.1' }).addTo(mini);
 
   const drawnItems = new L.FeatureGroup().addTo(map), drawnItemsMini = new L.FeatureGroup().addTo(mini);
   const vectorSync = {};
