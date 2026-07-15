@@ -69,6 +69,17 @@ body.show-ui .left-sidebar {
   cursor: pointer; flex-shrink: 0; text-transform: uppercase;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
+
+/* Compact CAD layer toggle */
+.mb.cad-small {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 6px;
+  font-size: 9px;
+}
+
 .mb:active { transform: scale(0.9); }
 .mb.on-saffron { background: var(--saffron)!important; color: #fff!important; border-color: #e68a2e!important; }
 .mb.on-accent { background: var(--accent)!important; color: #fff!important; border-color: var(--accent)!important; }

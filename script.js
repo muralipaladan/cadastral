@@ -5,7 +5,7 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
   const STORAGE_KEY   = 'murali_gis_v12';
-  const BHUVAN_URL    = 'https://bhuvanpanchayat.nrsc.gov.in/geoserver/wms';
+  const BHUVAN_URL    = 'https://bhuvan-vec1.nrsc.gov.in/bhuvan/gwc/service/wms/';
   const DEFAULT_VIEW  = { lat: 11.196, lng: 76.227, zoom: 16 };
 
   const State = { drawing: false, eraseMode: false, editMode: false, touchMove: false, routeMode: false, userLatLng: null, activeLayer: 'Hybrid', activeTool: null };
@@ -71,12 +71,11 @@
   map.createPane('cadastralPane'); Object.assign(map.getPane('cadastralPane').style, { zIndex:'600', pointerEvents:'none' });
 
   const WMS_BASE = { format:'image/png', transparent:true, maxZoom:22, tileSize:512, zoomOffset:-1, pane:'cadastralPane', className:'parcel-red' };
-  // Bhuvan cadastral layer. The supplied Google Earth URL requests KML;
-  // Leaflet needs the same WMS layer rendered as image tiles.
+  // Bhuvan GWC WMS cadastral layer (cadastral:cadastral_india).
   const wmsLayers = {
     cadastral: L.tileLayer.wms(BHUVAN_URL, {
       ...WMS_BASE,
-      layers: 'v3:cadastral',
+      layers: 'cadastral:cadastral_india',
       format: 'image/png',
       transparent: true,
       version: '1.1.1'
@@ -88,7 +87,7 @@
 
   const mini = L.map('zoomBox', { attributionControl:false, zoomControl:false, dragging:false, touchZoom:false, scrollWheelZoom:false, doubleClickZoom:false, boxZoom:false, layers:[L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom:22, subdomains:['mt0','mt1','mt2','mt3'] })] });
   mini.createPane('miniCadastral'); Object.assign(mini.getPane('miniCadastral').style, { zIndex:'600', pointerEvents:'none' });
-  L.tileLayer.wms(BHUVAN_URL, { ...WMS_BASE, pane:'miniCadastral', layers:'v3:cadastral', format:'image/png', transparent:true, version:'1.1.1' }).addTo(mini);
+  L.tileLayer.wms(BHUVAN_URL, { ...WMS_BASE, pane:'miniCadastral', layers:'cadastral:cadastral_india', format:'image/png', transparent:true, version:'1.1.1' }).addTo(mini);
 
   const drawnItems = new L.FeatureGroup().addTo(map), drawnItemsMini = new L.FeatureGroup().addTo(mini);
   const vectorSync = {};
