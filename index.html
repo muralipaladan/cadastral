@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sodestus — Extreme Mobile GIS</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<!-- EXTREME LEFT NARROW TOOLBAR -->
+<div class="left-sidebar">
+  
+  <!-- Layers -->
+  <button class="menu-cat" id="cat-layers" onclick="GIS.UI.toggleCat('layers')"><i class="fa-solid fa-layer-group"></i></button>
+  <div class="menu-sub" id="sub-layers">
+    <button class="mb" title="Hybrid" onclick="GIS.Layers.setBase('hybrid')">HYB</button>
+    <button class="mb" title="Road" onclick="GIS.Layers.setBase('road')">ROD</button>
+    <button class="mb" title="OpenStreetMap" onclick="GIS.Layers.setBase('osm')">OSM</button>
+    <div class="h-line"></div>
+    <button class="mb on-saffron" id="btnCad" onclick="GIS.Layers.toggleWms('cadastral')">CAD</button>
+  </div>
+
+  <!-- Drawing Tools -->
+  <button class="menu-cat" id="cat-draw" onclick="GIS.UI.toggleCat('draw')"><i class="fa-solid fa-pen-ruler"></i></button>
+  <div class="menu-sub" id="sub-draw">
+    <button class="mb" id="markerBtn" onclick="GIS.Draw.trigger('Marker')"><i class="fa-solid fa-location-dot"></i></button>
+    <button class="mb" id="lineBtn" onclick="GIS.Draw.trigger('Line')"><i class="fa-solid fa-slash"></i></button>
+    <button class="mb" id="polygonBtn" onclick="GIS.Draw.trigger('Polygon')"><i class="fa-solid fa-draw-polygon"></i></button>
+    <div class="h-line"></div>
+    <button class="mb" id="editBtn" onclick="GIS.Draw.toggleEdit()"><i class="fa-solid fa-pen-to-square"></i></button>
+    <button class="mb" id="eraseModeBtn" onclick="GIS.Draw.toggleErase()"><i class="fa-solid fa-eraser"></i></button>
+    <button class="mb" style="color:var(--red);" onclick="GIS.Draw.clearAll()"><i class="fa-solid fa-trash-can"></i></button>
+  </div>
+
+  <!-- Georeference (FMB) -->
+  <button class="menu-cat" id="cat-georef" onclick="GIS.UI.toggleCat('georef')"><i class="fa-solid fa-map-location-dot"></i></button>
+  <div class="menu-sub" id="sub-georef">
+    <label class="mb on-green"><i class="fa-solid fa-image"></i><input type="file" id="uploadFMB" accept=".jpg,.png,.pdf" style="display:none" /></label>
+    
+    <div id="fmbTools" style="display:none; flex-direction:column; gap:4px; width:100%; align-items:center; margin-top:4px;">
+      <button class="mb" id="touchMoveBtn" onclick="GIS.FMB.toggleTouch()"><i class="fa-solid fa-hand"></i></button>
+      <div class="h-line"></div>
+      <button class="mb" onclick="GIS.FMB.adjust('up')"><i class="fa-solid fa-caret-up"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('down')"><i class="fa-solid fa-caret-down"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('left')"><i class="fa-solid fa-caret-left"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('right')"><i class="fa-solid fa-caret-right"></i></button>
+      <div class="h-line"></div>
+      <button class="mb" onclick="GIS.FMB.adjust('zoomin')"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('zoomout')"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('rotL')"><i class="fa-solid fa-rotate-left"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('rotR')"><i class="fa-solid fa-rotate-right"></i></button>
+      <div class="h-line"></div>
+      <button class="mb" onclick="GIS.FMB.adjust('opPlus')"><i class="fa-solid fa-eye"></i></button>
+      <button class="mb" onclick="GIS.FMB.adjust('opMinus')"><i class="fa-solid fa-eye-slash"></i></button>
+      <div class="h-line"></div>
+      <button class="mb" style="color:var(--red);" onclick="GIS.FMB.remove()"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <button class="menu-cat" id="cat-nav" onclick="GIS.UI.toggleCat('nav')"><i class="fa-solid fa-route"></i></button>
+  <div class="menu-sub" id="sub-nav">
+    <button class="mb" id="routeModeBtn" onclick="GIS.Draw.toggleRouteMode()"><i class="fa-solid fa-location-arrow"></i></button>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <!-- Fixed Bottom Actions -->
+  <button class="menu-cat" id="gpsBtn" onclick="GIS.GPS.toggle()"><i class="fa-solid fa-crosshairs"></i></button>
+  <button class="menu-cat" onclick="document.getElementById('exportMenu').classList.toggle('active')"><i class="fa-solid fa-floppy-disk"></i></button>
+
+</div>
+
+<div id="statusText">Hybrid</div>
+
+<div id="map"></div>
+<div id="zoomBox"></div>
+
+<!-- Search Bar (Top Right) -->
+<div class="searchbar collapsed" id="searchBar">
+  <button id="searchToggleBtn" onclick="document.getElementById('searchBar').classList.remove('collapsed')"><i class="fa-solid fa-magnifying-glass"></i></button>
+  <input type="text" id="searchInput" placeholder="Search..." autocomplete="off" />
+  <button id="searchBtn"><i class="fa-solid fa-arrow-right"></i></button>
+</div>
+
+<!-- Export/Save Popup menu -->
+<div class="export-menu" id="exportMenu">
+  <button class="btn btn-export" onclick="GIS.IO.exportKMZ(); document.getElementById('exportMenu').classList.remove('active');"><i class="fa-solid fa-file-zipper"></i> Save KMZ</button>
+  <label class="btn btn-import" style="margin-top:4px; justify-content:center;">
+    <i class="fa-solid fa-file-import"></i> Load KML / KMZ
+    <input type="file" id="uploadFile" accept=".kml,.kmz,.json,.geojson" style="display:none" />
+  </label>
+</div>
+
+<div id="toast-root"></div>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Confirm</div>
+    <div class="modal-body"  id="modalBody">Are you sure?</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel"  id="modalCancel">Cancel</button>
+      <button class="modal-btn confirm" id="modalConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script src="https://unpkg.com/@mapbox/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
